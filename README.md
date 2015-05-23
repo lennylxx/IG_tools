@@ -8,7 +8,7 @@ igtool
 ------
 extract and create the *.dat files used by Innocent Grey
 
-### Supporting Games
+### Supported Games
 * Innocent Grey
   * Caucasus: Nanatsuki no Nie (クロウカシス - 七憑キノ贄)
   * PP pianissimo (ＰＰ-ピアニッシモ- 操リ人形ノ輪舞)
@@ -22,7 +22,7 @@ igscript
 --------
 parse and create the *.s files extracted from script.dat used by Innocent Grey
 
-### Supporting Games
+### Supported Games
 * Innocent Grey
   * Caucasus: Nanatsuki no Nie (クロウカシス - 七憑キノ贄)
   * PP pianissimo (ＰＰ-ピアニッシモ- 操リ人形ノ輪舞)
