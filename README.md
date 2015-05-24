@@ -6,7 +6,7 @@ Read [my blog] for more information.
 
 igtool
 ------
-extract and create the *.dat files used by Innocent Grey
+extract and create the `*.dat` files used by Innocent Grey
 
 ### Supported Games
 * Innocent Grey
@@ -18,9 +18,11 @@ extract and create the *.dat files used by Innocent Grey
 * Noesis
   * Furifure (フリフレ)
 
+> For the games using `*.iga` as their archive format, try http://asmodean.reverse.net/pages/exiga.html.
+
 igscript
 --------
-parse and create the *.s files extracted from script.dat used by Innocent Grey
+parse and create the `*.s` files extracted from script.dat used by Innocent Grey
 
 ### Supported Games
 * Innocent Grey
@@ -30,6 +32,8 @@ parse and create the *.s files extracted from script.dat used by Innocent Grey
   * Kara no Shoujo (殻ノ少女)
   * Nagomibako Innocent Grey Fandisc (和み匣 Innocent Greyファンディスク)
   * Eisai Kyouiku (英才狂育)
+  * Flowers -Le Volume sur Printemps- (FLOWERS 春篇)
+  * Flowers -Le Volume sur Ete- (FLOWERS 夏篇)
 * Noesis
   * Cure Girl
   * Furifure (フリフレ)
