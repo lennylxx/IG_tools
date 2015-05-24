@@ -172,7 +172,9 @@ void ParseScript(char *scrfn, char *txtfn){
 			case 0x043C://bmp -- 3C 0400 09
 			case 0x047B://bmp -- 7B 0401 09
 			case 0x0499://bmp -- 99 0400 0C/99 0401 0C
-			case 0x04AD:{//bmp -- AD 0400 09
+			case 0x049C://png -- 9C 0401 0D
+			case 0x04AD://bmp -- AD 0400 09
+			case 0x04B4:{//png -- B4 0400 0C
 					len = ins.opnum>>8;
 					if(len>=6){
 						buf = new u8[len];
@@ -247,6 +249,15 @@ void ParseScript(char *scrfn, char *txtfn){
 				if(padlen < 0) txt = txt.substr(0,len1);
 				outtxt<<txt<<endl;
 			}
+		}
+		
+		else if (ins.opcode == 0x1472 || ins.opcode == 0x1473){//unknown
+			for (u8 i=1;i<=4;i++){
+				infile.read((char *)&temp, sizeof(temp));
+				sprintf(err, "%04X %04X ", temp.unknown1, temp.unknown2);
+				outtxt<<err;
+			}
+			outtxt<<endl;
 		}
 	}
 	infile.close();

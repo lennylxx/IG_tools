@@ -188,7 +188,9 @@ void ParseScript(char *scrfn, char *txtfn){
 			case 0x043C://bmp -- 3C 0400 09
 			case 0x047B://bmp -- 7B 0401 09
 			case 0x0499://bmp -- 99 0400 0C/99 0401 0C
-			case 0x04AD:{//bmp -- AD 0400 09
+			case 0x049C://png -- 9C 0401 0D
+			case 0x04AD://bmp -- AD 0400 09
+			case 0x04B4:{//png -- B4 0400 0C
 					len = ins.opnum>>8;
 					if(len>=6){
 						buf = new u8[len];
@@ -245,6 +247,11 @@ void ParseScript(char *scrfn, char *txtfn){
 			}
 		}
 		
+		else if (ins.opcode == 0x1472 || ins.opcode == 0x1473){//unknown
+			for (u8 i=1;i<=4;i++){
+				infile.read((char *)&temp, sizeof(temp));
+			}
+		}
 	}
 	
 	infile.close();
@@ -388,7 +395,9 @@ void CreateScript(char *scrfn, char *txtfn, char *outfn){
 			case 0x043C://bmp -- 3C 0400 09
 			case 0x047B://bmp -- 7B 0401 09
 			case 0x0499://bmp -- 99 0400 0C/99 0401 0C
-			case 0x04AD:{//bmp -- AD 0400 09
+			case 0x049C://png -- 9C 0401 0D
+			case 0x04AD://bmp -- AD 0400 09
+			case 0x04B4:{//png -- B4 0400 0C
 					outfile.write((const char*)&ins, sizeof(ins));
 					len = ins.opnum>>8;
 					if(len>=6){
@@ -470,6 +479,14 @@ void CreateScript(char *scrfn, char *txtfn, char *outfn){
 						outfile<<buf[i+txt.length()];
 					}
 				}
+			}
+		}
+		
+		else if (ins.opcode == 0x1472 || ins.opcode == 0x1473){//unknown
+			outfile.write((const char*)&ins, sizeof(ins));
+			for (u8 i=1;i<=4;i++){
+				infile.read((char *)&temp, sizeof(temp));
+				outfile.write((const char*)&temp, sizeof(temp));
 			}
 		}
 		
@@ -580,7 +597,9 @@ void RebuildPointer(char *oldscr, char *newscr){
 			case 0x043C://bmp -- 3C 0400 09
 			case 0x047B://bmp -- 7B 0401 09
 			case 0x0499://bmp -- 99 0400 0C/99 0401 0C
-			case 0x04AD:{//bmp -- AD 0400 09
+			case 0x049C://png -- 9C 0401 0D
+			case 0x04AD://bmp -- AD 0400 09
+			case 0x04B4:{//png -- B4 0400 0C
 					outfile.write((const char*)&ins, sizeof(ins));
 					len = ins.opnum>>8;
 					if(len>=6){
@@ -653,6 +672,14 @@ void RebuildPointer(char *oldscr, char *newscr){
 				infile.read((char *)buf, len1);
 				outfile.write((const char*)&len1, sizeof(len1));
 				outfile.write((const char*)buf, len1);
+			}
+		}
+		
+		else if (ins.opcode == 0x1472 || ins.opcode == 0x1473){//unknown
+			outfile.write((const char*)&ins, sizeof(ins));
+			for (u8 i=1;i<=4;i++){
+				infile.read((char *)&temp, sizeof(temp));
+				outfile.write((const char*)&temp, sizeof(temp));
 			}
 		}
 		
