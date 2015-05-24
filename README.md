@@ -22,7 +22,7 @@ extract and create the `*.dat` files used by Innocent Grey
 
 igscript
 --------
-parse and create the `*.s` files extracted from script.dat used by Innocent Grey
+parse and create the `*.s` files extracted from script archive used by Innocent Grey
 
 ### Supported Games
 * Innocent Grey
