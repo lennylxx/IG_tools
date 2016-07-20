@@ -97,6 +97,8 @@ void ParseScript(char *scrfn, char *txtfn){
 			sprintf(err, "%04X %04X\n", temp.unknown1, temp.unknown2);
 			outtxt<<err;
 			switch(ins.opcode){
+			//二周目出现选择支
+			case 0x083B://jump
 			case 0x080D://jump
 				outtxt<<"!JUMP!"<<endl;
 				break;
