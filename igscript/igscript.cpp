@@ -117,6 +117,7 @@ void ParseScript(char *scrfn, char *txtfn){
 		if((ins.opcode>>8) == 0x08){
 			infile.read((char *)&temp, sizeof(temp));
 			switch(ins.opcode){
+			case 0x083B://jump
 			case 0x080D://jump
 				break;
 			case 0x0817:
@@ -294,6 +295,7 @@ void CreateScript(char *scrfn, char *txtfn, char *outfn){
 		if((ins.opcode>>8) == 0x08){
 			infile.read((char *)&temp, sizeof(temp));
 			switch(ins.opcode){
+			case 0x083B:
 			case 0x080D:{//jump
 					jplst[idx].oldadd = temp.unknown1; idx++;
 					outfile.write((const char*)&ins, sizeof(ins));
@@ -320,6 +322,8 @@ void CreateScript(char *scrfn, char *txtfn, char *outfn){
 						if(padlen >= 1){
 							for (u8 i=0;i<padlen;i++){
 								outfile<<buf[i+txt.length()];
+								//如果在对话末尾出现乱码，请注释掉上面一句，使用下面的语句。
+								//outfile<<buf[txt.length()];
 							}
 						}
 					}
@@ -369,6 +373,8 @@ void CreateScript(char *scrfn, char *txtfn, char *outfn){
 						if(padlen >= 1){
 							for (u8 i=0;i<padlen;i++){
 								outfile<<buf[i+txt.length()];
+								//如果在对话末尾出现乱码，请注释掉上面一句，使用下面的语句。
+								//outfile<<buf[txt.length()];
 							}
 						}
 					}
@@ -477,6 +483,8 @@ void CreateScript(char *scrfn, char *txtfn, char *outfn){
 				if(padlen >= 1){
 					for (u8 i=0;i<padlen;i++){
 						outfile<<buf[i+txt.length()];
+						//如果在对话末尾出现乱码，请注释掉上面一句，使用下面的语句。
+						//outfile<<buf[txt.length()];
 					}
 				}
 			}
@@ -520,6 +528,7 @@ void RebuildPointer(char *oldscr, char *newscr){
 		if((ins.opcode>>8) == 0x08){
 			infile.read((char *)&temp, sizeof(temp));
 			switch(ins.opcode){
+			case 0x083B:
 			case 0x080D:{//jump
 					temp.unknown1 = jplst[idx].newadd; idx++;
 					outfile.write((const char*)&ins, sizeof(ins));
