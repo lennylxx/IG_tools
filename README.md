@@ -10,7 +10,7 @@ extract and create the `*.dat` files used by Innocent Grey
 * Innocent Grey
   * Caucasus: Nanatsuki no Nie (クロウカシス - 七憑キノ贄)
   * PP pianissimo (ＰＰ-ピアニッシモ- 操リ人形ノ輪舞)
-  * Cartagra ~Tsuki kurui no Yamai~ (カルタグラ～ツキ狂イノ病～)
+  * Cartagra \~Tsuki kurui no Yamai\~ (カルタグラ～ツキ狂イノ病～)
   * Kara no Shoujo (殻ノ少女)
   * Nagomibako Innocent Grey Fandisc (和み匣 Innocent Greyファンディスク)
 * Noesis
