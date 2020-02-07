@@ -19,6 +19,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cstdint>
 #include <cstdlib>
 #include <string>
 #include <cstring>
@@ -29,31 +30,21 @@
 
 using namespace std;
 
-typedef char      s8;
-typedef short     s16;
-typedef int       s32;
-typedef long long s64;
-
-typedef unsigned char      u8;
-typedef unsigned short     u16;
-typedef unsigned int       u32;
-typedef unsigned long long u64;
-
 #define JUMPLISTMAXN 64
 
 struct INS{//instruction
-	u16 opcode;
-	u16 opnum;
+	uint16_t opcode;
+	uint16_t opnum;
 } ins;
 
 struct TEMP{
-	u16 unknown1;
-	u16 unknown2;
+	uint16_t unknown1;
+	uint16_t unknown2;
 } temp;
 
 struct JumpList{
-	u16 oldadd;
-	u16 newadd;
+	uint16_t oldadd;
+	uint16_t newadd;
 }jplst[JUMPLISTMAXN];
 
 void ParseScript(char *scrfn, char *txtfn);
@@ -108,7 +99,7 @@ void ParseScript(char *scrfn, char *txtfn){
 	}
 	
 	ofstream outtxt(txtfn, ios::binary);
-	u8 len,*buf;
+	uint8_t len,*buf;
 
 	while(1){
 		infile.read((char *)&ins, sizeof(ins));
@@ -123,10 +114,10 @@ void ParseScript(char *scrfn, char *txtfn){
 			case 0x081D:{//option and jump
 					len = ins.opnum;
 					if(len != 0){
-						buf = new u8[len];
+						buf = new uint8_t[len];
 						infile.read((char *)buf, len);
 						string txt((const char*)buf);
-						s32 padlen = len - txt.length();
+						int32_t padlen = len - txt.length();
 						if(padlen < 0) txt = txt.substr(0,len);
 						outtxt<<txt<<endl;
 					}
@@ -142,7 +133,7 @@ void ParseScript(char *scrfn, char *txtfn){
 			case 0x0830:{//ogg -- 30 0800 00
 					len = temp.unknown2>>8;
 					if(len != 0){
-						buf = new u8[len];
+						buf = new uint8_t[len];
 						infile.read((char *)buf, len);
 						//outtxt.write((const char *)buf, len); outtxt<<endl;
 					}
@@ -159,10 +150,10 @@ void ParseScript(char *scrfn, char *txtfn){
 			case 0x043F:{//subtitle 3F 0400 0C
 					len = ins.opnum>>8;
 					if(len != 0){
-						buf = new u8[len];
+						buf = new uint8_t[len];
 						infile.read((char *)buf, len);
 						string txt((const char*)buf);
-						s32 padlen = len - txt.length();
+						int32_t padlen = len - txt.length();
 						if(padlen < 0) txt = txt.substr(0,len);
 						outtxt<<txt<<endl;
 					}
@@ -171,7 +162,7 @@ void ParseScript(char *scrfn, char *txtfn){
 			case 0x0402:{//s
 					len = ins.opnum>>8;
 					if(len>=4){
-						buf = new u8[len];
+						buf = new uint8_t[len];
 						infile.read((char *)buf, len);
 						//outtxt.write((const char *)buf, len); outtxt<<endl;
 					}
@@ -193,7 +184,7 @@ void ParseScript(char *scrfn, char *txtfn){
 			case 0x04B4:{//png -- B4 0400 0C
 					len = ins.opnum>>8;
 					if(len>=6){
-						buf = new u8[len];
+						buf = new uint8_t[len];
 						infile.read((char *)buf, len);
 						//outtxt.write((const char *)buf, len); outtxt<<endl;
 					}
@@ -205,12 +196,12 @@ void ParseScript(char *scrfn, char *txtfn){
 		}
 		
 		else if(ins.opcode == 0x054A || ins.opcode == 0x0551){//special case
-			u8 zero;
+			uint8_t zero;
 			infile.read((char *)&zero, 1);
 		}
 		
 		else if(ins.opcode == 0x1006 || ins.opcode == 0x1008){//jump
-			for (u8 i=1;i<=3;i++){
+			for (uint8_t i=1;i<=3;i++){
 				infile.read((char *)&temp, sizeof(temp));
 			}
 		}
@@ -223,7 +214,7 @@ void ParseScript(char *scrfn, char *txtfn){
 			infile.read((char *)&temp, sizeof(temp));
 			infile.read((char *)&temp, sizeof(temp));
 			len = temp.unknown1;
-			buf = new u8[len];
+			buf = new uint8_t[len];
 			infile.read((char *)buf, len);
 			//outtxt.write((const char *)buf, len); outtxt<<endl;
 		}
@@ -235,20 +226,20 @@ void ParseScript(char *scrfn, char *txtfn){
 		
 		else if(ins.opcode == 0x0A37 || ins.opcode == 0x0A3E){
 			infile.read((char *)&temp, sizeof(temp));
-			u16 len1;
+			uint16_t len1;
 			infile.read((char *)&len1, sizeof(len1));
 			if(len1 != 0){
-				buf = new u8[len1];
+				buf = new uint8_t[len1];
 				infile.read((char *)buf, len1);
 				string txt((const char*)buf);
-				s32 padlen = len1 - txt.length();
+				int32_t padlen = len1 - txt.length();
 				if(padlen < 0) txt = txt.substr(0,len1);
 				outtxt<<txt<<endl;
 			}
 		}
 		
 		else if (ins.opcode == 0x1472 || ins.opcode == 0x1473){//unknown
-			for (u8 i=1;i<=4;i++){
+			for (uint8_t i=1;i<=4;i++){
 				infile.read((char *)&temp, sizeof(temp));
 			}
 		}
@@ -275,12 +266,12 @@ void CreateScript(char *scrfn, char *txtfn, char *outfn){
 	string tmpfn = string(outfn) + ".tmp";
 	ofstream outfile(tmpfn.c_str(), ios::binary);
 	
-	u8 len,*buf;
-	u8 idx = 0;//index of jumplist
+	uint8_t len,*buf;
+	uint8_t idx = 0;//index of jumplist
 	memset(jplst,-1,sizeof(jplst));
 	
 	while(1){
-		u16 curpos = infile.tellg(); 
+		uint16_t curpos = infile.tellg(); 
 		for (int j=0;j<JUMPLISTMAXN;j++){
 			if(jplst[j].oldadd == curpos){
 				jplst[j].newadd = outfile.tellp();
@@ -305,20 +296,20 @@ void CreateScript(char *scrfn, char *txtfn, char *outfn){
 					jplst[idx].oldadd = temp.unknown1; idx++;
 					len = ins.opnum;
 					if(len != 0){
-						buf = new u8[len];
+						buf = new uint8_t[len];
 						infile.read((char *)buf, len);
 						string txt((const char*)buf);
-						s32 padlen = len - txt.length();
+						int32_t padlen = len - txt.length();
 						if(padlen < 0) padlen = 0;
 						string str;
 						getline(intxt,str);
-						u8 newlen = str.length() + padlen;
+						uint8_t newlen = str.length() + padlen;
 						ins.opnum = newlen;
 						outfile.write((const char*)&ins, sizeof(ins));
 						outfile.write((const char*)&temp, sizeof(temp));
 						outfile<<str;
 						if(padlen >= 1){
-							for (u8 i=0;i<padlen;i++){
+							for (uint8_t i=0;i<padlen;i++){
 								outfile<<buf[i+txt.length()];
 							}
 						}
@@ -336,7 +327,7 @@ void CreateScript(char *scrfn, char *txtfn, char *outfn){
 					outfile.write((const char*)&ins, sizeof(ins));
 					outfile.write((const char*)&temp, sizeof(temp));
 					len = temp.unknown2>>8;
-					buf = new u8[len];
+					buf = new uint8_t[len];
 					infile.read((char *)buf, len);
 					outfile.write((const char*)buf, len);
 					break;
@@ -355,19 +346,19 @@ void CreateScript(char *scrfn, char *txtfn, char *outfn){
 			case 0x043F:{//subtitle 3F 0400 0C
 					len = ins.opnum>>8;
 					if(len != 0){
-						buf = new u8[len];
+						buf = new uint8_t[len];
 						infile.read((char *)buf, len);
 						string txt((const char*)buf);
-						s32 padlen = len - txt.length();
+						int32_t padlen = len - txt.length();
 						if(padlen < 0) padlen = 0;
 						string str;
 						getline(intxt,str);
-						u8 newlen = str.length() + padlen;
+						uint8_t newlen = str.length() + padlen;
 						ins.opnum = newlen * 0x100;
 						outfile.write((const char*)&ins, sizeof(ins));
 						outfile<<str;
 						if(padlen >= 1){
-							for (u8 i=0;i<padlen;i++){
+							for (uint8_t i=0;i<padlen;i++){
 								outfile<<buf[i+txt.length()];
 							}
 						}
@@ -378,7 +369,7 @@ void CreateScript(char *scrfn, char *txtfn, char *outfn){
 					outfile.write((const char*)&ins, sizeof(ins));
 					len = ins.opnum>>8;
 					if(len>=4){
-						buf = new u8[len];
+						buf = new uint8_t[len];
 						infile.read((char *)buf, len);
 						outfile.write((const char*)buf, len);
 					}
@@ -401,7 +392,7 @@ void CreateScript(char *scrfn, char *txtfn, char *outfn){
 					outfile.write((const char*)&ins, sizeof(ins));
 					len = ins.opnum>>8;
 					if(len>=6){
-						buf = new u8[len];
+						buf = new uint8_t[len];
 						infile.read((char *)buf, len);
 						outfile.write((const char*)buf, len);
 					}
@@ -415,7 +406,7 @@ void CreateScript(char *scrfn, char *txtfn, char *outfn){
 		}
 		
 		else if(ins.opcode == 0x054A || ins.opcode == 0x0551){//special case
-			u8 zero;
+			uint8_t zero;
 			infile.read((char *)&zero, 1);
 			outfile.write((const char*)&ins, sizeof(ins));
 			outfile.write((const char*)&zero, 1);
@@ -423,7 +414,7 @@ void CreateScript(char *scrfn, char *txtfn, char *outfn){
 
 		else if(ins.opcode == 0x1006 || ins.opcode == 0x1008){//jump
 			outfile.write((const char*)&ins, sizeof(ins));
-			for (u8 i=1;i<=3;i++){
+			for (uint8_t i=1;i<=3;i++){
 				infile.read((char *)&temp, sizeof(temp));
 				outfile.write((const char*)&temp, sizeof(temp));
 			}
@@ -439,19 +430,19 @@ void CreateScript(char *scrfn, char *txtfn, char *outfn){
 
 		else if(ins.opcode == 0x0C2B || ins.opcode == 0x0C2D || ins.opcode == 0x0C25){//ogg
 			outfile.write((const char*)&ins, sizeof(ins));
-			for (u8 i=1;i<=2;i++){
+			for (uint8_t i=1;i<=2;i++){
 				infile.read((char *)&temp, sizeof(temp));
 				outfile.write((const char*)&temp, sizeof(temp));
 			}
 			len = temp.unknown1;
-			buf = new u8[len];
+			buf = new uint8_t[len];
 			infile.read((char *)buf, len);
 			outfile.write((const char*)buf, len);
 		}
 		
 		else if(ins.opcode == 0x203D || ins.opcode == 0x2042){
 			outfile.write((const char*)&ins, sizeof(ins));
-			for (u8 i=1;i<=2;i++){
+			for (uint8_t i=1;i<=2;i++){
 				infile.read((char *)&temp, sizeof(temp));
 				outfile.write((const char*)&temp, sizeof(temp));
 			}
@@ -461,21 +452,21 @@ void CreateScript(char *scrfn, char *txtfn, char *outfn){
 			outfile.write((const char*)&ins, sizeof(ins));
 			infile.read((char *)&temp, sizeof(temp));
 			outfile.write((const char*)&temp, sizeof(temp));
-			u16 len1;
+			uint16_t len1;
 			infile.read((char *)&len1, sizeof(len1));
 			if(len1 != 0){
-				buf = new u8[len1];
+				buf = new uint8_t[len1];
 				infile.read((char *)buf, len1);
 				string txt((const char*)buf);
-				s32 padlen = len1 - txt.length();
+				int32_t padlen = len1 - txt.length();
 				if(padlen < 0) padlen = 0;
 				string str;
 				getline(intxt,str);
-				u16 newlen = str.length() + padlen;
+				uint16_t newlen = str.length() + padlen;
 				outfile.write((const char*)&newlen, sizeof(newlen));
 				outfile<<str;
 				if(padlen >= 1){
-					for (u8 i=0;i<padlen;i++){
+					for (uint8_t i=0;i<padlen;i++){
 						outfile<<buf[i+txt.length()];
 					}
 				}
@@ -484,7 +475,7 @@ void CreateScript(char *scrfn, char *txtfn, char *outfn){
 		
 		else if (ins.opcode == 0x1472 || ins.opcode == 0x1473){//unknown
 			outfile.write((const char*)&ins, sizeof(ins));
-			for (u8 i=1;i<=4;i++){
+			for (uint8_t i=1;i<=4;i++){
 				infile.read((char *)&temp, sizeof(temp));
 				outfile.write((const char*)&temp, sizeof(temp));
 			}
@@ -510,8 +501,8 @@ void RebuildPointer(char *oldscr, char *newscr){
 	}
 	
 	ofstream outfile(newscr, ios::binary);
-	u8 len,*buf;
-	u8 idx = 0;//index of jumplist
+	uint8_t len,*buf;
+	uint8_t idx = 0;//index of jumplist
 
 	while(1){
 		infile.read((char *)&ins, sizeof(ins));
@@ -530,7 +521,7 @@ void RebuildPointer(char *oldscr, char *newscr){
 			case 0x081D:{//option and jump
 					len = ins.opnum;
 					if(len != 0){
-						buf = new u8[len];
+						buf = new uint8_t[len];
 						infile.read((char *)buf, len);
 						outfile.write((const char*)&ins, sizeof(ins));
 						temp.unknown1 = jplst[idx].newadd; idx++;
@@ -550,7 +541,7 @@ void RebuildPointer(char *oldscr, char *newscr){
 					outfile.write((const char*)&ins, sizeof(ins));
 					outfile.write((const char*)&temp, sizeof(temp));
 					len = temp.unknown2>>8;
-					buf = new u8[len];
+					buf = new uint8_t[len];
 					infile.read((char *)buf, len);
 					outfile.write((const char*)buf, len);
 					break;
@@ -569,7 +560,7 @@ void RebuildPointer(char *oldscr, char *newscr){
 			case 0x043F:{//subtitle 3F 0400 0C
 					len = ins.opnum>>8;
 					if(len != 0){
-						buf = new u8[len];
+						buf = new uint8_t[len];
 						infile.read((char *)buf, len);
 						outfile.write((const char*)&ins, sizeof(ins));
 						outfile.write((const char*)buf, len);
@@ -580,7 +571,7 @@ void RebuildPointer(char *oldscr, char *newscr){
 					outfile.write((const char*)&ins, sizeof(ins));
 					len = ins.opnum>>8;
 					if(len>=4){
-						buf = new u8[len];
+						buf = new uint8_t[len];
 						infile.read((char *)buf, len);
 						outfile.write((const char*)buf, len);
 					}
@@ -603,7 +594,7 @@ void RebuildPointer(char *oldscr, char *newscr){
 					outfile.write((const char*)&ins, sizeof(ins));
 					len = ins.opnum>>8;
 					if(len>=6){
-						buf = new u8[len];
+						buf = new uint8_t[len];
 						infile.read((char *)buf, len);
 						outfile.write((const char*)buf, len);
 					}
@@ -617,7 +608,7 @@ void RebuildPointer(char *oldscr, char *newscr){
 		}
 		
 		else if(ins.opcode == 0x054A || ins.opcode == 0x0551){//special case
-			u8 zero;
+			uint8_t zero;
 			infile.read((char *)&zero, 1);
 			outfile.write((const char*)&ins, sizeof(ins));
 			outfile.write((const char*)&zero, 1);
@@ -625,7 +616,7 @@ void RebuildPointer(char *oldscr, char *newscr){
 
 		else if(ins.opcode == 0x1006 || ins.opcode == 0x1008){//jump
 			outfile.write((const char*)&ins, sizeof(ins));
-			for (u8 i=1;i<=2;i++){
+			for (uint8_t i=1;i<=2;i++){
 				infile.read((char *)&temp, sizeof(temp));
 				outfile.write((const char*)&temp, sizeof(temp));
 			}
@@ -643,19 +634,19 @@ void RebuildPointer(char *oldscr, char *newscr){
 
 		else if(ins.opcode == 0x0C2B || ins.opcode == 0x0C2D || ins.opcode == 0x0C25){//ogg
 			outfile.write((const char*)&ins, sizeof(ins));
-			for (u8 i=1;i<=2;i++){
+			for (uint8_t i=1;i<=2;i++){
 				infile.read((char *)&temp, sizeof(temp));
 				outfile.write((const char*)&temp, sizeof(temp));
 			}
 			len = temp.unknown1;
-			buf = new u8[len];
+			buf = new uint8_t[len];
 			infile.read((char *)buf, len);
 			outfile.write((const char*)buf, len);
 		}
 		
 		else if(ins.opcode == 0x203D || ins.opcode == 0x2042){
 			outfile.write((const char*)&ins, sizeof(ins));
-			for (u8 i=1;i<=2;i++){
+			for (uint8_t i=1;i<=2;i++){
 				infile.read((char *)&temp, sizeof(temp));
 				outfile.write((const char*)&temp, sizeof(temp));
 			}
@@ -665,10 +656,10 @@ void RebuildPointer(char *oldscr, char *newscr){
 			outfile.write((const char*)&ins, sizeof(ins));
 			infile.read((char *)&temp, sizeof(temp));
 			outfile.write((const char*)&temp, sizeof(temp));
-			u16 len1;
+			uint16_t len1;
 			infile.read((char *)&len1, sizeof(len1));
 			if(len1 != 0){
-				buf = new u8[len1];
+				buf = new uint8_t[len1];
 				infile.read((char *)buf, len1);
 				outfile.write((const char*)&len1, sizeof(len1));
 				outfile.write((const char*)buf, len1);
@@ -677,7 +668,7 @@ void RebuildPointer(char *oldscr, char *newscr){
 		
 		else if (ins.opcode == 0x1472 || ins.opcode == 0x1473){//unknown
 			outfile.write((const char*)&ins, sizeof(ins));
-			for (u8 i=1;i<=4;i++){
+			for (uint8_t i=1;i<=4;i++){
 				infile.read((char *)&temp, sizeof(temp));
 				outfile.write((const char*)&temp, sizeof(temp));
 			}
@@ -706,12 +697,12 @@ char* Crypt(char *fn, bool encrypt){//encrypt or decrypt
 	
 	struct _stat buf;
 	_stat(fn, &buf);
-	u8 *buff = new u8[buf.st_size];
+	uint8_t *buff = new uint8_t[buf.st_size];
 	
 	infile.read((char *)buff, buf.st_size);
 	ofstream outfile(tfn, ios::binary);
 	
-	for (s32 i=0;i<buf.st_size;i++){
+	for (int32_t i=0;i<buf.st_size;i++){
 		buff[i] ^= 0xFF;
 	}
 	outfile.write((const char*)buff, buf.st_size);
