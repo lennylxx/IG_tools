@@ -17,16 +17,12 @@
 		Furifure 2(フリフレ2)
 */
 
-#include <iostream>
-#include <fstream>
 #include <cstdint>
 #include <cstdlib>
-#include <string>
 #include <cstring>
-#include <io.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <windows.h>
+#include <fstream>
+#include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -695,17 +691,18 @@ char* Crypt(char *fn, bool encrypt){//encrypt or decrypt
 		strcat(tfn, ".x");
 	}
 	
-	struct _stat buf;
-	_stat(fn, &buf);
-	uint8_t *buff = new uint8_t[buf.st_size];
+	infile.seekg(0, ios::end);
+	streampos insize = infile.tellg();
+	infile.seekg(0, ios::beg);
+	uint8_t *buff = new uint8_t[insize];
 	
-	infile.read((char *)buff, buf.st_size);
+	infile.read((char *)buff, insize);
 	ofstream outfile(tfn, ios::binary);
 	
-	for (int32_t i=0;i<buf.st_size;i++){
+	for (int32_t i=0;i<insize;i++){
 		buff[i] ^= 0xFF;
 	}
-	outfile.write((const char*)buff, buf.st_size);
+	outfile.write((const char*)buff, insize);
 	
 	infile.close();
 	outfile.close();
