@@ -57,6 +57,7 @@ igscript -x -p 0000.s 0000.txt
 igscript -x -c 0000.s 0000.txt new\0000.s
 ```
 4.use `parseall.bat` and `createall.bat` to do batch job.
+
 5.after new script files (*.s) are created, create the script archive file with `igtool`
 ```
 igtool -c folder_of_script_files output.dat
